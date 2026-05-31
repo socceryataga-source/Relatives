@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Random Image Activity</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f8fb;
+      color: #222;
+      text-align: center;
+      padding: 30px 16px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.08);
+      padding: 24px;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 1.8rem;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+
+    button {
+      font-size: 1rem;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #2563eb;
+      color: #fff;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    .secondary {
+      background: #6b7280;
+    }
+
+    .secondary:hover {
+      background: #4b5563;
+    }
+
+    .status {
+      margin: 12px 0 18px;
+      font-size: 0.98rem;
+      color: #555;
+    }
+
+    .image-frame {
+      width: 100%;
+      min-height: 420px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px dashed #d1d5db;
+      border-radius: 16px;
+      background: #fafafa;
+      overflow: hidden;
+    }
+
+    img {
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+      display: none;
+    }
+
+    .placeholder {
+      color: #888;
+      font-size: 1rem;
+      padding: 40px 20px;
+    }
+
+    .small {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 16px;
+      line-height: 1.6;
+    }
+
+    code {
+      background: #eef2ff;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Random Image Activity</h1>
+
+    <div class="controls">
+      <button id="startBtn">Start / Next</button>
+      <button id="resetBtn" class="secondary">Reset</button>
+    </div>
+
+    <div class="status" id="status">画像はまだ表示されていません。</div>
+
+    <div class="image-frame">
+      <div class="placeholder" id="placeholder">Startを押すと画像が表示されます。</div>
+      <img id="mainImage" src="" alt="Activity image" />
+    </div>
+
+    <div class="small">
+      画像ファイル名を追加するときは、下の <code>imageFiles</code> に書き足してください。<br>
+      例：<code>"img21.jpg"</code>
+    </div>
+  </div>
+
+  <script>
+    /*
+      ここに、imgフォルダ内の画像ファイル名を並べます。
+      画像を増やすときは、この配列にファイル名を追加してください。
+    */
+    const imageFiles = [
+      "img1.jpg",
+      "img2.jpg",
+      "img3.jpg",
+      "img4.jpg",
+　　　 "img5.jpg",
+      "img6.jpg",
+      "img7.jpg",
+      "img8.jpg",
+　　　 "img9.jpg",
+      "img10.jpg",
+      "img11.jpg",
+      "img12.jpg",
+      "img13.jpg",
+      "img14.jpg",
+      "img15.jpg",
+      "img16.jpg",
+      "img17.jpg",
+　　　 "img18.jpg",
+　　 　"img19.jpg",
+  　　 "img20.jpg",
+      "img21.jpg",
+      "img22.jpg",
+      "img23.jpg",
+　　　 "img24.jpg",
+      "img25.jpg",
+      "img26.jpg",
+      "img27.jpg",
+　　　 "img28.jpg",
+      "img29.jpg",
+      "img30.jpg",
+      "img31.jpg",
+      "img32.jpg",
+      "img33.jpg",
+      "img34.jpg",
+      "img35.jpg",
+      "img36.jpg",
+　　　 "img37.jpg",
+　　 　"img38.jpg",
+  　　 "img39.jpg",
+      "img40.jpg",
+      "img41.jpg",
+      "img42.jpg",
+　　　 "img43.jpg",
+      "img44.jpg",
+      "img45.jpg",
+    ];
+
+    const imageFolder = "img/";
+    let remainingImages = [];
+    let shownCount = 0;
+
+    const startBtn = document.getElementById("startBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const mainImage = document.getElementById("mainImage");
+    const placeholder = document.getElementById("placeholder");
+    const status = document.getElementById("status");
+
+    function shuffle(array) {
+      const copied = [...array];
+      for (let i = copied.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copied[i], copied[j]] = [copied[j], copied[i]];
+      }
+      return copied;
+    }
+
+    function resetDeck() {
+      remainingImages = shuffle(imageFiles);
+      shownCount = 0;
+      mainImage.style.display = "none";
+      mainImage.src = "";
+      placeholder.style.display = "block";
+      status.textContent = "リセットしました。Startを押してください。";
+    }
+
+    function showNextImage() {
+      if (imageFiles.length === 0) {
+        status.textContent = "画像リストが空です。imageFiles に画像名を入力してください。";
+        return;
+      }
+
+      if (remainingImages.length === 0) {
+        remainingImages = shuffle(imageFiles);
+        shownCount = 0;
+        status.textContent = "全画像を表示したので、もう一度シャッフルしました。";
+      }
+
+      const nextFile = remainingImages.pop();
+      shownCount++;
+
+      mainImage.src = imageFolder + nextFile;
+      mainImage.style.display = "block";
+      placeholder.style.display = "none";
+
+      status.textContent =
+        `表示中: ${nextFile} ｜ この周で ${shownCount} / ${imageFiles.length}`;
+    }
+
+    mainImage.addEventListener("error", () => {
+      status.textContent = `画像を読み込めませんでした: ${mainImage.src}`;
+    });
+
+    startBtn.addEventListener("click", showNextImage);
+    resetBtn.addEventListener("click", resetDeck);
+
+    resetDeck();
+  </script>
+</body>
+</html>
